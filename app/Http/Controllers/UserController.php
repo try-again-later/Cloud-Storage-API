@@ -66,10 +66,6 @@ class UserController extends Controller
 
     public function show(JsonResponseHelper $response): JsonResponse
     {
-        if (!auth()->check()) {
-            return $response->unauthorized();
-        }
-
         return $response
             ->withData(['user' => [
                 'name' => auth()->user()->name,

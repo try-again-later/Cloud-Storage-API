@@ -36,6 +36,12 @@ return [
             'throw' => false,
         ],
 
+        'user_files' => [
+            'driver' => 'local',
+            'root' => storage_path('app/user_files'),
+            'throw' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

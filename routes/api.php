@@ -34,6 +34,7 @@ Route::middleware('auth:sanctum')
             ->name('files.')
             ->group(function () {
                 Route::get('files', 'index')->name('index');
+                Route::post('files/{folder?}', 'store')->name('store');
             });
 
         Route::controller(UserController::class)
