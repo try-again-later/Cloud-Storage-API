@@ -45,8 +45,6 @@ class SessionController extends Controller
 
         $validatedCredentials = $validator->safe()->only(['email', 'password']);
         if (auth()->attempt($validatedCredentials)) {
-            $request->session()->regenerate();
-
             return $response->ok();
         }
 

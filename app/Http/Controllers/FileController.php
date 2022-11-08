@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class FileController extends Controller
 {
@@ -31,7 +32,7 @@ class FileController extends Controller
         $files = $user
             ->files()
             ->get()
-            ->map(fn (File $fileModel) => $fileModel->only(['id', 'name', 'created_at']));
+            ->map(fn(File $fileModel) => $fileModel->only(['id', 'name', 'created_at']));
 
         return response()->json([
             'status' => 'success',
@@ -80,7 +81,7 @@ class FileController extends Controller
         $filePath = $file->store('user_files');
 
         $fileModel = File::query()->create([
-            'name' => $file->getClientOriginalName(),
+            'name' => Str::limit($file->getClientOriginalName(), limit: 255),
             'path' => $filePath,
             'owner_id' => auth()->id(),
             'folder_id' => null,
@@ -91,5 +92,30 @@ class FileController extends Controller
         }
 
         return $response->ok();
+    }
+
+    public function update(
+        File               $file,
+        Request            $request,
+        JsonResponseHelper $response,
+    )
+    {
+        $validator = validator::make($request->all(), [
+            'name' => ['max:255'],
+        ]);
+        if ($validator->fails()) {
+            return $response->withdata($validator->errors()->toarray());
+        }
+        $validatedData = $validator->safe()->only(['name']);
+        $validatedData['name'] = $validatedData['name'] ?? $file->name;
+
+        $file->name = $validatedData['name'];
+        if (!$file->save()) {
+            return $response->serverError();
+        }
+
+        return $response
+            ->withData(['file' => $file->only(['id', 'name', 'created_at'])])
+            ->ok();
     }
 }

@@ -35,6 +35,7 @@ Route::middleware('auth:sanctum')
             ->group(function () {
                 Route::get('files', 'index')->name('index');
                 Route::post('files/{folder?}', 'store')->name('store');
+                Route::patch('files/{file:id}', 'update')->name('update');
             });
 
         Route::controller(UserController::class)

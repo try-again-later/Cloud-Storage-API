@@ -59,7 +59,6 @@ class UserController extends Controller
         }
 
         auth()->login($newUser);
-        $request->session()->regenerate();
 
         return $response->ok();
     }

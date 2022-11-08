@@ -85,4 +85,10 @@ class JsonResponseHelper
         $this->withStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
         return $this->make();
     }
+
+    public function notFound(): JsonResponse
+    {
+        $this->withStatus(Response::HTTP_NOT_FOUND);
+        return $this->make();
+    }
 }
