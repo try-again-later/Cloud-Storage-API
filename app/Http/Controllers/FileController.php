@@ -98,13 +98,17 @@ class FileController extends Controller
         File               $file,
         Request            $request,
         JsonResponseHelper $response,
-    )
+    ): JsonResponse
     {
+        if ($file->owner->id !== auth()->id()) {
+            return $response->unauthorized();
+        }
+
         $validator = validator::make($request->all(), [
             'name' => ['max:255'],
         ]);
         if ($validator->fails()) {
-            return $response->withdata($validator->errors()->toarray());
+            return $response->withdata($validator->errors()->toarray())->badRequest();
         }
         $validatedData = $validator->safe()->only(['name']);
         $validatedData['name'] = $validatedData['name'] ?? $file->name;
@@ -117,5 +121,22 @@ class FileController extends Controller
         return $response
             ->withData(['file' => $file->only(['id', 'name', 'created_at'])])
             ->ok();
+    }
+
+    public function delete(
+        File               $file,
+        Request            $request,
+        JsonResponseHelper $response,
+    ): JsonResponse
+    {
+        if ($file->owner->id !== auth()->id()) {
+            return $response->unauthorized();
+        }
+
+        if (!$file->delete()) {
+            return $response->serverError();
+        }
+
+        return $response->ok();
     }
 }
