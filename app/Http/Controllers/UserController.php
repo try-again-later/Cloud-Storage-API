@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\JsonResponseHelper;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -24,17 +24,15 @@ class UserController extends Controller
      * - password
      *
      * @param Request $request
+     * @param JsonResponseHelper $response
      * @return JsonResponse
      */
-    public function create(Request $request): JsonResponse
+    public function create(Request $request, JsonResponseHelper $response): JsonResponse
     {
         if (auth()->check()) {
-            return response()->json([
-                'status' => 'fail',
-                'data' => [
-                    'message' => 'Cannot register a new user, because you are currently logged in.',
-                ],
-            ], status: Response::HTTP_BAD_REQUEST);
+            return $response
+                ->withMessage('Cannot register a new user, because you are currently logged in.')
+                ->badRequest();
         }
 
         $validator = Validator::make($request->all(), [
@@ -44,10 +42,9 @@ class UserController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'status' => 'fail',
-                'data' => $validator->errors(),
-            ], status: Response::HTTP_BAD_REQUEST);
+            return $response
+                ->withData($validator->errors()->toArray())
+                ->badRequest();
         }
 
         $validatedUserData = $validator->safe()->only(['name', 'email', 'password']);
@@ -58,18 +55,12 @@ class UserController extends Controller
         ]);
 
         if (!$newUser->exists()) {
-            return response()->json([
-                'status' => 'fail',
-                'data' => null,
-            ], status: Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $response->serverError();
         }
 
         auth()->login($newUser);
         $request->session()->regenerate();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => null,
-        ]);
+        return $response->ok();
     }
 }
