@@ -13,6 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
+        // TODO: store folder size in bytes as an INT attribute (this is fine since user can only upload at most 100Mb of data to the cloud)
         Schema::create('folders', function (Blueprint $table) {
             $table->id();
             $table->timestamps();

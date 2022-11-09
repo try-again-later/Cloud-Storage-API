@@ -7,6 +7,7 @@ use App\Models\File;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -125,7 +126,6 @@ class FileController extends Controller
 
     public function delete(
         File               $file,
-        Request            $request,
         JsonResponseHelper $response,
     ): JsonResponse
     {
@@ -138,5 +138,17 @@ class FileController extends Controller
         }
 
         return $response->ok();
+    }
+
+    public function show(
+        File $file,
+        JsonResponseHelper $response,
+    )
+    {
+        if ($file->owner->id !== auth()->id()) {
+            return $response->unauthorized();
+        }
+
+        return Storage::download($file->path);
     }
 }

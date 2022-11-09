@@ -37,6 +37,7 @@ Route::middleware('auth:sanctum')
                 Route::post('files/{folder?}', 'store')->name('store');
                 Route::patch('files/{file:id}', 'update')->name('update');
                 Route::delete('files/{file:id}', 'delete')->name('delete');
+                Route::get('files/{file:id}', 'show')->name('show');
             });
 
         Route::controller(UserController::class)
