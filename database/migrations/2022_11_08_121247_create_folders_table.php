@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->integer('size')->default(0);
-            $table->string('name')->unique();
+            $table->string('name');
 
             $table
                 ->foreignId('parent_folder_id')

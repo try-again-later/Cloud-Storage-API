@@ -146,7 +146,7 @@ class FileController extends Controller
     ): JsonResponse
     {
         if ($file->owner->id !== auth()->id()) {
-            return $response->unauthorized();
+            return $response->forbidden();
         }
 
         $validator = validator::make($request->all(), [
@@ -173,7 +173,7 @@ class FileController extends Controller
     ): JsonResponse
     {
         if ($file->owner->id !== auth()->id()) {
-            return $response->unauthorized();
+            return $response->forbidden();
         }
 
         if (!$file->delete()) {
@@ -189,7 +189,7 @@ class FileController extends Controller
     )
     {
         if ($file->owner->id !== auth()->id()) {
-            return $response->unauthorized();
+            return $response->forbidden();
         }
 
         return Storage::download($file->path, $file->name);

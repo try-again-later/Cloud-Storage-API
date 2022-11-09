@@ -91,4 +91,10 @@ class JsonResponseHelper
         $this->withStatus(Response::HTTP_NOT_FOUND);
         return $this->make();
     }
+
+    public function forbidden(): JsonResponse
+    {
+        $this->withStatus(Response::HTTP_FORBIDDEN);
+        return $this->make();
+    }
 }
