@@ -14,7 +14,11 @@ class FolderController extends Controller
     private const PUBLIC_FOLDER_ATTRIBUTES = ['id', 'name', 'size'];
 
     /**
-     * Lists all folders created by the user (except for the implicitly created root folder).
+     * Lists all folders created by the authenticated user (except for the implicitly created root
+     * folder): their IDs, names and space taken (in bytes).
+     *
+     * @param JsonResponseHelper $response
+     * @return JsonResponse
      */
     public function index(JsonResponseHelper $response): JsonResponse
     {
@@ -30,6 +34,13 @@ class FolderController extends Controller
             ->ok();
     }
 
+    /**
+     * Shows the information about the root folder. This includes the total space taken by all
+     * user's files.
+     *
+     * @param JsonResponseHelper $response
+     * @return JsonResponse
+     */
     public function getRootFolder(JsonResponseHelper $response): JsonResponse
     {
         return $response
@@ -37,6 +48,16 @@ class FolderController extends Controller
             ->ok();
     }
 
+    /**
+     * Create a new folder.
+     *
+     * Required parameters:
+     * - name: at most 255 characters long, does __not__ have to be a unique folder name.
+     *
+     * @param Request $request
+     * @param JsonResponseHelper $response
+     * @return JsonResponse
+     */
     public function store(Request $request, JsonResponseHelper $response): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -61,6 +82,13 @@ class FolderController extends Controller
             ->ok();
     }
 
+    /**
+     * Delete the folder and all the files inside it.
+     *
+     * @param Folder $folder
+     * @param JsonResponseHelper $response
+     * @return JsonResponse
+     */
     public function delete(Folder $folder, JsonResponseHelper $response): JsonResponse
     {
         // Users are not allowed to delete their root folder
@@ -87,6 +115,13 @@ class FolderController extends Controller
         return $response->ok();
     }
 
+    /**
+     * Show info about the specific folder: ID, name and size taken by the files inside the folder.
+     *
+     * @param JsonResponseHelper $response
+     * @param Folder $folder
+     * @return JsonResponse
+     */
     public function show(JsonResponseHelper $response, Folder $folder)
     {
         if ($folder->parentFolder->id !== auth()->user()->rootFolder->id) {

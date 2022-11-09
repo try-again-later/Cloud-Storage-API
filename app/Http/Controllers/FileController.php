@@ -5,13 +5,13 @@ namespace App\Http\Controllers;
 use App\Helpers\JsonResponseHelper;
 use App\Models\File;
 use App\Models\Folder;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FileController extends Controller
 {
@@ -31,6 +31,13 @@ class FileController extends Controller
     public const MAX_FILE_SIZE = 20 * 1024 * 1024;
     public const MAX_STORAGE_SIZE = 100 * 1024 * 1024;
 
+    /**
+     * List all files inside the folder.
+     *
+     * @param JsonResponseHelper $response
+     * @param Folder|null $folder In case this parameter is `null`, returns files located directly inside the root folder.
+     * @return JsonResponse
+     */
     public function index(JsonResponseHelper $response, ?Folder $folder = null): JsonResponse
     {
         $folder ??= auth()->user()->rootFolder;
@@ -44,6 +51,20 @@ class FileController extends Controller
             ->ok();
     }
 
+    /**
+     * Stores the file inside the folder.
+     *
+     * Required parameters:
+     * - file: must be just a single file (no arrays allowed), PHP files are not allowed,
+     *   files >20Mb are not allowed, storing more than 100Mb of data at once is not allowed.
+     *
+     * Response contains the ID of a newly created file.
+     *
+     * @param JsonResponseHelper $response
+     * @param Request $request
+     * @param Folder|null $folder In case this parameter is `null`, stores the file directly inside the root folder.
+     * @return JsonResponse
+     */
     public function store(
         JsonResponseHelper $response,
         Request            $request,
@@ -121,6 +142,18 @@ class FileController extends Controller
             ->ok();
     }
 
+    /**
+     * Update the metadata of the file.
+     *
+     * Optional parameters:
+     * - name: at most 255 characters long, does __not__ have to be a unique name, you can have
+     *   several files with the same name inside the folder.
+     *
+     * @param File $file
+     * @param Request $request
+     * @param JsonResponseHelper $response
+     * @return JsonResponse
+     */
     public function update(
         File               $file,
         Request            $request,
@@ -149,6 +182,13 @@ class FileController extends Controller
         return $response->ok();
     }
 
+    /**
+     * Deletes the specified file and frees the space of the user's cloud storage.
+     *
+     * @param File $file
+     * @param JsonResponseHelper $response
+     * @return JsonResponse
+     */
     public function delete(
         File               $file,
         JsonResponseHelper $response,
@@ -176,10 +216,17 @@ class FileController extends Controller
         return $response->ok();
     }
 
+    /**
+     * Downloads the specified file.
+     *
+     * @param File $file
+     * @param JsonResponseHelper $response
+     * @return StreamedResponse|JsonResponse
+     */
     public function show(
         File               $file,
         JsonResponseHelper $response,
-    )
+    ): StreamedResponse|JsonResponse
     {
         if ($file->owner->id !== auth()->id()) {
             return $response->forbidden();

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Helpers\JsonResponseHelper;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 
 class SessionController extends Controller
@@ -17,7 +16,7 @@ class SessionController extends Controller
      * ````
      *
      * Required parameters:
-     * - email:
+     * - email
      * - password
      *
      * @param Request $request

@@ -17,6 +17,38 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
+/*
+ * All the API routes will return a JSON of the following form:
+ *
+ * ```
+ * {
+ *     "status": %status%,
+ *     "data": %data%
+ * }
+ * ```
+ *
+ * `%status%` is a string which can either be "success" or "fail". This is just for convenience,
+ * you could just check the HTTP response code instead to know if the request was successful.
+ *
+ * `%data%` is an object, it contains the payload of the response. The way the response looks
+ * usually depends on the specific request, but there are several common cases:
+ *
+ * - if you submit some incorrect form data, the `%data%` will contain a mapping from the key names
+ *   to the arrays of error messages related to the keys. For example:
+ *
+ *   ```
+ *   {
+ *       "status": "fail",
+ *       "data": {
+ *           "email": ["This email is already taken."],
+ *           "password": ["This field is required."]
+ *       }
+ *   }
+ *   ```
+ *
+ * - if there is no payload to return, the `%data%` will just be `null`, not an empty object
+ */
+
 Route::controller(UserController::class)->name('user.')->group(function () {
     Route::post('register', 'create')->name('create');
 });
