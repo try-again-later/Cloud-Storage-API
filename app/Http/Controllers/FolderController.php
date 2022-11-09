@@ -20,7 +20,7 @@ class FolderController extends Controller
     {
         $folders = auth()
             ->user()
-            ->rootFolder
+            ->rootfolder
             ->nestedFolders
             ->map(fn(Folder $folder) => $folder->only(self::PUBLIC_FOLDER_ATTRIBUTES))
             ->toArray();
@@ -70,7 +70,7 @@ class FolderController extends Controller
                 ->forbidden();
         }
         if ($folder->parentFolder->id !== auth()->user()->rootFolder->id) {
-            return $response->unauthorized();
+            return $response->forbidden();
         }
 
         DB::transaction(function () use ($folder) {
@@ -85,5 +85,16 @@ class FolderController extends Controller
         });
 
         return $response->ok();
+    }
+
+    public function show(JsonResponseHelper $response, Folder $folder)
+    {
+        if ($folder->parentFolder->id !== auth()->user()->rootFolder->id) {
+            return $response->forbidden();
+        }
+
+        return $response
+            ->withData(['folder' => $folder->only(self::PUBLIC_FOLDER_ATTRIBUTES)])
+            ->ok();
     }
 }

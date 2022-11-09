@@ -1,0 +1,1486 @@
+{
+	"info": {
+		"_postman_id": "ea08be2e-fa3d-4064-8540-d095df745d6e",
+		"name": "Cloud Storage API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Get a CSRF token (run this request first)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set('CSRF_TOKEN', decodeURIComponent(pm.cookies.get('XSRF-TOKEN')));\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/sanctum/csrf-cookie",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"sanctum",
+								"csrf-cookie"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Mary",
+									"type": "default"
+								},
+								{
+									"key": "email",
+									"value": "mary@email.com",
+									"type": "default"
+								},
+								{
+									"key": "password",
+									"value": "123",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_API_URL}}/register",
+							"host": [
+								"{{BASE_API_URL}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Fails in case the user is currently logged in",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "Mary",
+											"type": "default"
+										},
+										{
+											"key": "email",
+											"value": "mary@email.com",
+											"type": "default"
+										},
+										{
+											"key": "password",
+											"value": "123",
+											"type": "default"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_API_URL}}/register",
+									"host": [
+										"{{BASE_API_URL}}"
+									],
+									"path": [
+										"register"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "localhost:80"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 09 Nov 2022 10:31:56 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 09 Nov 2022 10:31:56 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.1.12"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "59"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "localhost"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "XSRF-TOKEN=eyJpdiI6InR2ZG9KYThXam5UZTdvNXBScE5SN2c9PSIsInZhbHVlIjoiVklwQmdvS1pBZnZtemhJaHQ0TWNVK3FoYkQ4OUZmMkFoWkFiS2RZZGJ3U0hhMkF0Zms2UkpJN0pkSmkzUUljektNV2EvQnd0dnlKY2xsdksrd3NkcE1YT3JxcEtaZStIR1pqcVhTbE1sc2ZWeThZSWx3Tm1NZURna3g2WDJ0MEMiLCJtYWMiOiJhODRmZGU2NDg5MGRhNzFkNWUyZTAzN2E4YTRhNzcwYzQwMWE5M2MwMzRkNmJlMDAzYTk1ZjM5NjkzZDQ1YjUyIiwidGFnIjoiIn0%3D; expires=Wed, 09 Nov 2022 12:31:56 GMT; Max-Age=7200; path=/; domain=localhost; samesite=lax"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "laravel_session=eyJpdiI6ImRUa0VHRkp3cFlXelc5MERZOUo5Wmc9PSIsInZhbHVlIjoiM1B2OVM1Z09LOG1MNVplTEU5bVJkd0NqSWtUYTRJdmI1YithZEJVQmdzdDYyQjRtZC9aTS9Wb2IvVmM1WFMybHQxb3NZNW1DTjdVVlg1WUp0L3YvOHdRdGcwaEtLejVaQlZiVXhLWnNsQ1JBUExFMk1NNGxNVUJnNGJxN0FMT1UiLCJtYWMiOiIyMDFjMzNmMWIwOTdkZWQzMDljMTFjNTkzYmQ3NmZlYzllNTU0YTI2N2U5ZjgwOTAxODdmYmNlNGRhNjNhMzU2IiwidGFnIjoiIn0%3D; expires=Wed, 09 Nov 2022 12:31:56 GMT; Max-Age=7200; path=/; domain=localhost; httponly; samesite=lax"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"fail\",\n    \"data\": {\n        \"message\": \"Cannot register a new user, because you are currently logged in.\"\n    }\n}"
+						},
+						{
+							"name": "Fails in case the email is already taken",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "Mary",
+											"type": "default"
+										},
+										{
+											"key": "email",
+											"value": "mary@email.com",
+											"type": "default"
+										},
+										{
+											"key": "password",
+											"value": "123",
+											"type": "default"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_API_URL}}/register",
+									"host": [
+										"{{BASE_API_URL}}"
+									],
+									"path": [
+										"register"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "localhost:80"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 09 Nov 2022 10:33:19 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 09 Nov 2022 10:33:19 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.1.12"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "59"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "localhost"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "XSRF-TOKEN=eyJpdiI6IjJWNkdOaks0VUFId1I5TlE5eCs2VFE9PSIsInZhbHVlIjoiRFI5WllKL3NLejl2OEJ6T1o0MEdjWjRZcjBYV0gwa2ovaEU1djdHVHhrYksyYTNBMC93RlNMVm5SSXBjVVFjaEtnYzNNeDNrOGJlMWFnY2pYd2JPRWFHME5PVXdBclc4eDdrTlNaemNPVDN0VmVDazJwRFZzQ2o4K3liVklSbjkiLCJtYWMiOiIwZDk5YzAyMTYyYmI0OTFiMTljOTA1ZTI1NDcyYjUwZGYwOTUwNjZkY2ExNjJjOTJlOWRlYzY0N2M0MjkyNmU4IiwidGFnIjoiIn0%3D; expires=Wed, 09 Nov 2022 12:33:19 GMT; Max-Age=7200; path=/; domain=localhost; samesite=lax"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "laravel_session=eyJpdiI6Ii9GWGYwYlY5K1pjYnRIQzlRdktkb0E9PSIsInZhbHVlIjoiV0gyUWlTVlo2VUFLRGRtaTFLdDFhT1ZIMEpIMWVIY0tta3RvUHh2cTdJbVpqTFJtTTl2emVJUnl3Ykt2cFFUTTk4S3Mva1RJTkp1RnREbHlMei9JOVVzVER4QjFCY1RxSWljbUhxaWFqU1V3SXhDSGc3QWtpOVBkV3ZkRDFpNlAiLCJtYWMiOiIyOTQwYWM2Y2VjOWJiYmZkMjg3YzY1YmRmNWIzMDA0N2RjZjVlY2UwOGFlYzQyNjM0ZGExYjMxYTdjZWIzMTQwIiwidGFnIjoiIn0%3D; expires=Wed, 09 Nov 2022 12:33:19 GMT; Max-Age=7200; path=/; domain=localhost; httponly; samesite=lax"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"fail\",\n    \"data\": {\n        \"email\": [\n            \"The email has already been taken.\"\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "mary@email.com",
+									"type": "default"
+								},
+								{
+									"key": "password",
+									"value": "123",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_API_URL}}/login",
+							"host": [
+								"{{BASE_API_URL}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Fails in case the user is already logged in",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "mary@email.com",
+											"type": "default"
+										},
+										{
+											"key": "password",
+											"value": "123",
+											"type": "default"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_API_URL}}/login",
+									"host": [
+										"{{BASE_API_URL}}"
+									],
+									"path": [
+										"login"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "localhost:80"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 09 Nov 2022 10:35:07 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 09 Nov 2022 10:35:07 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.1.12"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "59"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "localhost"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "XSRF-TOKEN=eyJpdiI6Ino4cXZoNXdaei9UdC9oZ3JkS2FTVWc9PSIsInZhbHVlIjoiNE1HQ0VGdzJhKzQrVzlaOXRBRGZuSnNydGVjVnVWSERPK3B3WWlRc0VMOWZCOUN1UmJFbFd1TFdIOW1zcGdhTldqSm9hcUxxeU9LbzVvSFRZSUp1c2lOU0tSZTFqZHFSdW5sOTA1Zi9TQ3c3ZHQ3NXlZQ0JRVmoxcmdZZmxFYmoiLCJtYWMiOiJjNzI1MzJlNzMxNDAyMjkxOTczZDljMGRkMjJmYjVmY2FjZTIxM2FjMzM2OWRjZmQ5MmQxY2IxOTM2MjkzOTc5IiwidGFnIjoiIn0%3D; expires=Wed, 09 Nov 2022 12:35:07 GMT; Max-Age=7200; path=/; domain=localhost; samesite=lax"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "laravel_session=eyJpdiI6ImVPajh2VFBoWmN0ZStvZUFMeXF1Wnc9PSIsInZhbHVlIjoiSnpjQ3NadDF6ZEpPT2l6bXRIR3BvK0FXTXVrK2VGcFBWQy9lS0UveW5PbTg0YVhIYkFZaTNsdlJYVUNMMnNPSG5SNktiNVJLMjFxOTljT2FwYTUxTGV1Tk5pcG5YREIxZmg5dXZKU2c3aWFvUWlvaUFMcVVhQ3VSZEZJUjNqbHMiLCJtYWMiOiIxM2RkNjE4NTJmODNiOTk0ZmMwNjkwZmMyNWQxOGZlMzY1MThmMWE1ZjU0ZDFjMjUwYmQxODI4NTVmMGY5NTZhIiwidGFnIjoiIn0%3D; expires=Wed, 09 Nov 2022 12:35:07 GMT; Max-Age=7200; path=/; domain=localhost; httponly; samesite=lax"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"fail\",\n    \"data\": {\n        \"message\": \"You are already logged in.\"\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Files",
+			"item": [
+				{
+					"name": "List all files inside the root folder",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_API_URL}}/files",
+							"host": [
+								"{{BASE_API_URL}}"
+							],
+							"path": [
+								"files"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Files with the same name are allowed",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_API_URL}}/files",
+									"host": [
+										"{{BASE_API_URL}}"
+									],
+									"path": [
+										"files"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "localhost:80"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 09 Nov 2022 10:38:01 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 09 Nov 2022 10:38:01 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.1.12"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "59"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "localhost"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "XSRF-TOKEN=eyJpdiI6IlE2OUVwRGpRaTQzMUxCcDBSTUhoYVE9PSIsInZhbHVlIjoib2VIVTV3d0NoZzhTanpJc0dzS0loT2VBaFIxR2cxL1JkKzJ5Tmc1Y3VGcE1pdlhrMURUZTZjKzNkY2ZEWCtJTVRuMlR4T083azdMck0rdW9hQlc4REFDWEk5WDJRUzlSYlZIVUhXcXl1WGVNR0RVclF1ZW9sRTdmUXdOT1dzQ3EiLCJtYWMiOiI1ZGUxMWM0NTkxYzcxNmJkNzU5MWJlYmExNmQ2Mzg2ZDI5Yjk5MTE0ZWI5NDY3OThlODk4ODgwNzhiOTRkY2M4IiwidGFnIjoiIn0%3D; expires=Wed, 09 Nov 2022 12:38:01 GMT; Max-Age=7200; path=/; domain=localhost; samesite=lax"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "laravel_session=eyJpdiI6IlNPWVJQNjd3VXp3d3NIRmlOWU1FUFE9PSIsInZhbHVlIjoiVFI5cCtPMnRzNWZNN1lKdFg4bUxqa1RjY1dCWTE2WkpxRm9Sa1FBNWphMVNRZEw5dkg4U21ubmNBOVIyd2RBbzFSYTNwOGpEd1d1LzM4cU9XQjJYcExkNE1KakpNYXdNYlRUSHFBT256S0g0SzBkNFpFRk5Vb3RxajJmRjRNRmwiLCJtYWMiOiJkMTkxYTkwMGQ5Zjc0NDhlMTQ3YzliZjI2NTJlNTRkNWE4OGUyZWNmZjA5ZTlkNjcyYmM0ZDIxMmIwZjA3M2NjIiwidGFnIjoiIn0%3D; expires=Wed, 09 Nov 2022 12:38:01 GMT; Max-Age=7200; path=/; domain=localhost; httponly; samesite=lax"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"data\": {\n        \"files\": [\n            {\n                \"id\": 2,\n                \"name\": \"file.txt\",\n                \"size\": 29,\n                \"created_at\": \"2022-11-09T10:26:33.000000Z\"\n            },\n            {\n                \"id\": 3,\n                \"name\": \"file.txt\",\n                \"size\": 29,\n                \"created_at\": \"2022-11-09T10:35:52.000000Z\"\n            },\n            {\n                \"id\": 4,\n                \"name\": \"file.txt\",\n                \"size\": 29,\n                \"created_at\": \"2022-11-09T10:35:53.000000Z\"\n            }\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "List all files inside some folder",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_API_URL}}/files/folder/:folder_id",
+							"host": [
+								"{{BASE_API_URL}}"
+							],
+							"path": [
+								"files",
+								"folder",
+								":folder_id"
+							],
+							"variable": [
+								{
+									"key": "folder_id",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload a new file to the root folder",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "file.txt"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_API_URL}}/files",
+							"host": [
+								"{{BASE_API_URL}}"
+							],
+							"path": [
+								"files"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Response contains the ID of the newly created file",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file",
+											"type": "file",
+											"src": "file.txt"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_API_URL}}/files",
+									"host": [
+										"{{BASE_API_URL}}"
+									],
+									"path": [
+										"files"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "localhost:80"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 09 Nov 2022 10:46:01 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 09 Nov 2022 10:46:01 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.1.12"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "54"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "localhost"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "XSRF-TOKEN=eyJpdiI6IlI4NjZOMDZ1RGRrNGNEeVVLVERRT2c9PSIsInZhbHVlIjoick1lQ3h4bTF1M3UyUEQzaHN6LzN6RVdrZ0lRQjlGSndVZkcvRklYU0xrSUZwNG1JbmlicjhTS1g3Mk1renM0MFY2UjczaWx1T2tDTjBuZFU0K04rZXBrVUdpRThEeUtoK2pjSjdnRkpWNGsyV3Z1TUVXR21mTWl1d3NBN0ZZcUMiLCJtYWMiOiI0MjA4MjU2MmQxN2Q4MzI5MDJjMjEzMjU2NGE1YjA0OTU4YjFhYzg2OTU1ZTA0ZmFkMjhlMmVmM2RlZTQxNWFmIiwidGFnIjoiIn0%3D; expires=Wed, 09 Nov 2022 12:46:01 GMT; Max-Age=7200; path=/; domain=localhost; samesite=lax"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "laravel_session=eyJpdiI6ImwrZEZ6dWJrRkxLQjBPcGNLaE5HOVE9PSIsInZhbHVlIjoiMTkrU3RlRE9NcmlsK3QvNnNQTEd2UVNpVTQvMGtSR1Roa2VJNWxJK2tlc1RlUE9LOWNmUHo5WGRaSnRhdzJsNEV2K09xakdOT1F2R2JoaUNEd3NVcitQNmd4bm1iTENBMGg3TVFmb1QzUUZvK3RteU5rVkI4SXZVM1JCa1QrVXciLCJtYWMiOiI0YzFhY2YxNmJlOTdiYTA0MWJkMjFjZWZkN2IyYTE0NTA4MDhjMWU1MjI1OTJlZmNkNWJmN2MwMGI2NzljNTc5IiwidGFnIjoiIn0%3D; expires=Wed, 09 Nov 2022 12:46:01 GMT; Max-Age=7200; path=/; domain=localhost; httponly; samesite=lax"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"data\": {\n        \"file\": {\n            \"id\": 6\n        }\n    }\n}"
+						},
+						{
+							"name": "Trying to upload a PHP script will fail",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file",
+											"type": "file",
+											"src": "script.php"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_API_URL}}/files",
+									"host": [
+										"{{BASE_API_URL}}"
+									],
+									"path": [
+										"files"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "localhost:80"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 09 Nov 2022 10:52:51 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 09 Nov 2022 10:52:51 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.1.12"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "59"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "localhost"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "XSRF-TOKEN=eyJpdiI6Ik4wOXR1THFQTmNZOE8zL0k2YmZuZEE9PSIsInZhbHVlIjoiOVordjFBaEtia0hoNDBJNHRhYm95UzV3Y3FkSlY3bGZsdlZpeVhQWnNNSnZSRUtwYTloMGt1SjZrL1lONGtEdTNqdWtoUzZkVjlqVmZYeGRmQ2xQV2luNTlqQ0h1Z1ozclR0a2ZKQ0xtL0VMZkZjbmkrOTYwSW5PcFhpUml3Q0giLCJtYWMiOiI1NWFhNjIxN2JjYWZhODU0N2QxNjFjMDRhYzczOTM3NjhhYWJhZjRkNTM4Mzg4YWY1OTBlZmExZGQ5MTQ0MDQzIiwidGFnIjoiIn0%3D; expires=Wed, 09 Nov 2022 12:52:51 GMT; Max-Age=7200; path=/; domain=localhost; samesite=lax"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "laravel_session=eyJpdiI6IktKVTA2Rnc0YU9reHB1eStqSXRIMkE9PSIsInZhbHVlIjoiYWdMajFic0dzN0pNNnlOdEE1VzYyQ0NSWHIyNnBrWmJVczh0M2lTWlhPUzlqY3U4UGxYYjlFdjRTcSswOGM4WDBxZnFnNmxMclUwdE8zR0szY1R3NVRRdU5hVXdiVXpCTmRnS1N0MGxDbVVZcU9maVNlRzJqWEUyck95UjFzRXciLCJtYWMiOiIwODQ3NzFkMTdmZTljODI4NTA4MDJmYzI3NzFlY2E2Mjk3ZDU1ZTQ3OWI0NWFlNDU0YmZlM2RhMDBiODUzNmY1IiwidGFnIjoiIn0%3D; expires=Wed, 09 Nov 2022 12:52:51 GMT; Max-Age=7200; path=/; domain=localhost; httponly; samesite=lax"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"fail\",\n    \"data\": {\n        \"file\": \"Uploading this type of file is not supported.\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Upload a new file to some folder",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "file.txt"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_API_URL}}/files/folder/:folder_id",
+							"host": [
+								"{{BASE_API_URL}}"
+							],
+							"path": [
+								"files",
+								"folder",
+								":folder_id"
+							],
+							"variable": [
+								{
+									"key": "folder_id",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Rename a file",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Some new name.txt",
+									"type": "default"
+								},
+								{
+									"key": "_method",
+									"value": "PATCH",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_API_URL}}/files/id/:file_id",
+							"host": [
+								"{{BASE_API_URL}}"
+							],
+							"path": [
+								"files",
+								"id",
+								":file_id"
+							],
+							"variable": [
+								{
+									"key": "file_id",
+									"value": "6"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a file",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_API_URL}}/files/:file_id",
+							"host": [
+								"{{BASE_API_URL}}"
+							],
+							"path": [
+								"files",
+								":file_id"
+							],
+							"variable": [
+								{
+									"key": "file_id",
+									"value": "7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download the file",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_API_URL}}/files/id/:file_id",
+							"host": [
+								"{{BASE_API_URL}}"
+							],
+							"path": [
+								"files",
+								"id",
+								":file_id"
+							],
+							"variable": [
+								{
+									"key": "file_id",
+									"value": "8"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Show authenticated user data",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_API_URL}}/user",
+							"host": [
+								"{{BASE_API_URL}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Show authenticated user data",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_API_URL}}/user",
+									"host": [
+										"{{BASE_API_URL}}"
+									],
+									"path": [
+										"user"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "localhost:80"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 09 Nov 2022 10:49:05 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 09 Nov 2022 10:49:05 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.1.12"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "54"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "localhost"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "XSRF-TOKEN=eyJpdiI6ImlsS0tLRXRyVGdGZkkxSjdGRWY3Zmc9PSIsInZhbHVlIjoidzlCYk9saVJneER0ZVptdzdRL0ZpYWNHQldaWmtKTHhoSFlJT3c4Nmw5OUNKaHVqT01LdWxnL2Y0UEVGRWpnanNZOUhiWExGeVkvUCt4QnlhOE11Y3M4d2pvSHpIZy9jM0VkNTErRTE3dm50TVBybjloMElObkNveFVCRi9vK1YiLCJtYWMiOiI1MjQ0MGRmNmQ0YjkzZmEzZmUyZjBjMDYyNDlhM2UyMTYzNTRjNGM1YmJlODFjOGIyNTc5MDJiMDQ0YjhlNzAxIiwidGFnIjoiIn0%3D; expires=Wed, 09 Nov 2022 12:49:05 GMT; Max-Age=7200; path=/; domain=localhost; samesite=lax"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "laravel_session=eyJpdiI6Ikk5d2RPUFBYamYwUTdJYnR5a0VNTHc9PSIsInZhbHVlIjoiV29wYlhyVmRPUkVid3pCZlRFSTZhQzRtMm02Uzk1LzN5VlZ5Ym96YnRIa2ZKWlEzRlV4TDR0dXZqOVFObFVkaDlPZDVxSEJJd2s5UnNtemgrTmp4OUtmbHM5R2V3ZDZZUUxLQVZVaVpQS0ZlWmFLTHVIWnFDd0hBeWJBS0k3TUEiLCJtYWMiOiI4MmU1NzcwNDRiZTQ3ZTNiMDgzZDAwYWFkZTQ0N2Q1OGNiYzQ2OTJmMDYxNWI5NzljOWU2MDdhMDM5MGIzM2YwIiwidGFnIjoiIn0%3D; expires=Wed, 09 Nov 2022 12:49:05 GMT; Max-Age=7200; path=/; domain=localhost; httponly; samesite=lax"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"data\": {\n        \"user\": {\n            \"name\": \"Mary\",\n            \"email\": \"mary@email.com\"\n        }\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Folders",
+			"item": [
+				{
+					"name": "List all folders (excluding the implicit root folder)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_API_URL}}/folders",
+							"host": [
+								"{{BASE_API_URL}}"
+							],
+							"path": [
+								"folders"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "List all folders including their info (name and size)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_API_URL}}/folders",
+									"host": [
+										"{{BASE_API_URL}}"
+									],
+									"path": [
+										"folders"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Get info about the root folder",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_API_URL}}/folders/root",
+							"host": [
+								"{{BASE_API_URL}}"
+							],
+							"path": [
+								"folders",
+								"root"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get total space taken by all of the files",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_API_URL}}/folders/root",
+									"host": [
+										"{{BASE_API_URL}}"
+									],
+									"path": [
+										"folders",
+										"root"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "localhost:80"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 09 Nov 2022 10:49:34 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 09 Nov 2022 10:49:34 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.1.12"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "58"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "localhost"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "XSRF-TOKEN=eyJpdiI6IlJZZUlWNklQQmsycHA1VUQzNURoRHc9PSIsInZhbHVlIjoiTHlMMjZMWld2RTVTUDJ1eGFQRlpaYWhsM09GcFE5S2dVK1FFa2lFYStDMm5qWmhVWFlnSktnd1dVL2szTXRlOW5ESjZwM1IwRTJsZGJSUnFxUUc5YUZsT0F5cXBUUEtqbzl5TnJpM3F1ZURqdXJxNDhIYS9MNXZCUTVEZnp4amUiLCJtYWMiOiJiYjRmY2U1MGRiY2UzNjllY2IyZmE0ODViNTIyMGNlYjIyNTE2Mjg4NzVmMDdmMmE1MmM2NDQxNjE0NjhiMjRiIiwidGFnIjoiIn0%3D; expires=Wed, 09 Nov 2022 12:49:34 GMT; Max-Age=7200; path=/; domain=localhost; samesite=lax"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "laravel_session=eyJpdiI6ImRzdkNXNkxhOGFUUlJmaUdMSzJiT0E9PSIsInZhbHVlIjoiSFJnWExXT2FjRmJsbEJydW9HRy9SRllKcEVOUnl4QkQ4MlpNcGFnS0N5Uy81ZjZqbU5mOU91c0pUTUtEVmdVUVJWV0J6SWE5M0YyVjd2OUlJcE8xVk1pUWJSaDB2aW9pNWwzdk05UURiTWhOdm5iYjNQSkFCdWtSMGVhRlluSHQiLCJtYWMiOiJjZDhkN2E1NTc1NTBkNWNiMGEzZWRlNTcxYzcwOTViNjNhZTZkMzE5MTQ3MjA4Y2YyNTY5ODJiZDQxYzFjNTVjIiwidGFnIjoiIn0%3D; expires=Wed, 09 Nov 2022 12:49:34 GMT; Max-Age=7200; path=/; domain=localhost; httponly; samesite=lax"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"data\": {\n        \"root\": {\n            \"id\": 1,\n            \"name\": \"/\",\n            \"size\": 203\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Create a new folder",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "my_folder",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_API_URL}}/folders",
+							"host": [
+								"{{BASE_API_URL}}"
+							],
+							"path": [
+								"folders"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Response contains the ID of the newly created folder",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "my_folder",
+											"type": "default"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_API_URL}}/folders",
+									"host": [
+										"{{BASE_API_URL}}"
+									],
+									"path": [
+										"folders"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "localhost:80"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 09 Nov 2022 10:43:16 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 09 Nov 2022 10:43:16 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.1.12"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "58"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "localhost"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "XSRF-TOKEN=eyJpdiI6IldER2g5SlJ4ZHIzRkVzUzJrSlltRkE9PSIsInZhbHVlIjoiOVZDWldvM2pZK0V3c3FlYzhBeHl5N3YwUFp2N21EblA5SW9EdjhuclNsK01iWE00QS9PZWl4TnA2RVhNR2FWcnd0RndZNzVyazROWUpYaG1KSDNySjM5YjBkN2N6ZGl3bzBHVXpWaEg4Kzh0TU0ybnZhdEYxQTk3TEZFZC81RTYiLCJtYWMiOiIwY2RjYWE5NWYzNmFlYThiNTQ2MDJjODlkZmY1NmE2OWRkYzU3NzVkY2U5YWI1OWZjOTEwZjYyOTkyY2NkZTE5IiwidGFnIjoiIn0%3D; expires=Wed, 09 Nov 2022 12:43:16 GMT; Max-Age=7200; path=/; domain=localhost; samesite=lax"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "laravel_session=eyJpdiI6IlZlN3pHWEQ5UG9QZ3B2dkZCYU10YWc9PSIsInZhbHVlIjoieXByZEhGQnZtb0FiNXNMUUlFeDVRZXhveUVJMHhmc3JQU293RUJRcVUvTEdQWVhFZnRsZk0vSTJUdzY1eE9HOGhma3FqL0dHdmJKTDJFRVRINnA0MllMVDZJTU13L3VEWWdlTlV0UGxhQU5RbnQwOXNwK2h1R3BwMldRT1R6N2QiLCJtYWMiOiI1ZjZhZjQ1MDgxNTg2YjMxNjExYWMxZDY1NDlmMTQxZGE3ZDQ4NGIzMjVlNzNmNTk2MTlkYzE3ZjgyZDlhZjFiIiwidGFnIjoiIn0%3D; expires=Wed, 09 Nov 2022 12:43:16 GMT; Max-Age=7200; path=/; domain=localhost; httponly; samesite=lax"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"data\": {\n        \"folder\": {\n            \"id\": 3\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete a folder including all files inside of it",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_API_URL}}/folders/:folder_id",
+							"host": [
+								"{{BASE_API_URL}}"
+							],
+							"path": [
+								"folders",
+								":folder_id"
+							],
+							"variable": [
+								{
+									"key": "folder_id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Trying to delete the implicit root folder will fail",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_API_URL}}/folders/:folder_id",
+									"host": [
+										"{{BASE_API_URL}}"
+									],
+									"path": [
+										"folders",
+										":folder_id"
+									],
+									"variable": [
+										{
+											"key": "folder_id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "localhost:80"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 09 Nov 2022 10:44:22 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 09 Nov 2022 10:44:22 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.1.12"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "58"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "localhost"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "XSRF-TOKEN=eyJpdiI6IjBWVVoxU3hyelNNNjZlTjUxTGlZYUE9PSIsInZhbHVlIjoiTEtzcko3blEyRjZLdG0zRGdpcFZRK21BYXlPeHJsS1ZDRjZ6MncrMUt4VDQ3ZlEvMjdwdGJDSnpUd3htcFF6MVk2UjN0dGhNZVhxRlFqRlF2TWZ4UFEvQk9lNFhpT0UvR0J1VnBlUmNsQkdCRWVoTEN5UUhEaXhKcDBjbGh2VEMiLCJtYWMiOiJkMjc1YWI0N2UzNmZkYjhjNmU3YjAwMTZmYTA0Mjg1Njc2NDdhYWEwODIzY2M4MTBlNTI5Njg0ODQyY2FmYmY1IiwidGFnIjoiIn0%3D; expires=Wed, 09 Nov 2022 12:44:22 GMT; Max-Age=7200; path=/; domain=localhost; samesite=lax"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "laravel_session=eyJpdiI6Ii9wMlA1RlFYbEhxSWVmeGhxSEhmcVE9PSIsInZhbHVlIjoiVE85ZXhGZTQyU1BhN2tHWU9YSXRYTGQwVVNaUVlMOStXV3d3d3NmcGIyMDJJUFU1dDRaQ3JuaHBodjRYcTBTYTNOT2t3RWZDYW85Rm5LZ3BZZ2syVEtrQ1ZBaVYrSmRrS2JWdG85MHBRSDB4R1NQSXY5TzAyVHF3SjRtYVZzOFciLCJtYWMiOiI3MTdhODNiYTBiNzE4YTUwMjc1NjA2ZGIxNTVhZTdhYjFlNTIxNDgxNGZkODhjYjQ0MWY2YzEwZTBkZmEzMWFjIiwidGFnIjoiIn0%3D; expires=Wed, 09 Nov 2022 12:44:22 GMT; Max-Age=7200; path=/; domain=localhost; httponly; samesite=lax"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"fail\",\n    \"data\": {\n        \"message\": \"Deleting the root folder is not allowed\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get info about the specific folder",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_API_URL}}/folders/:folder_id",
+							"host": [
+								"{{BASE_API_URL}}"
+							],
+							"path": [
+								"folders",
+								":folder_id"
+							],
+							"variable": [
+								{
+									"key": "folder_id",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get the size of the folder in bytes",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_API_URL}}/folders/:folder_id",
+									"host": [
+										"{{BASE_API_URL}}"
+									],
+									"path": [
+										"folders",
+										":folder_id"
+									],
+									"variable": [
+										{
+											"key": "folder_id",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "localhost:80"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 09 Nov 2022 10:59:01 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 09 Nov 2022 10:59:01 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.1.12"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "58"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "localhost"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "XSRF-TOKEN=eyJpdiI6Ik96NVhpMUgzMzNIOFpSMnowelQwdnc9PSIsInZhbHVlIjoiZ25nVStWNlNZbnBxR1NsRkcrSHlNODB0UnlrL3dNSE83bzl4WStjTXY5RlRNTEZuV2h5VTB3SFVrVFRjalpUam5QTDlCUTRLcTN1MGpKcjUranQvd3pqSWhva0VsdWNmQXR6MjBJOVpIYzlRWG02b3QzSmk4SkFzQ0poMDk1RDMiLCJtYWMiOiJkNjI3NDk1OGE4N2I2Y2ZmZDU0Y2Y4NDZhMjc3Mjk2MGJjNjc2MjZjNTA1NWI5NDdkYzNmNzUwMmNmM2U2Y2YxIiwidGFnIjoiIn0%3D; expires=Wed, 09 Nov 2022 12:59:01 GMT; Max-Age=7200; path=/; domain=localhost; samesite=lax"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "laravel_session=eyJpdiI6IklLSTc0VUhxOC8xZVZNakNiRXJSd1E9PSIsInZhbHVlIjoiNVIxY3E5NGlFeTRGclE4S2ZZMW1JYU9jREFXTHhkZVdRaUQvcG9WeHpkbG9yNk1wb2NyUWs5eGdtdVlyamhVZGdYQW9LYnVPVXp3Q1YrRzZPdU5qZzFVbWJLTUVyeVRHMWE1YStiUWJuZ09lcmF2aDY4RXBBN2l2UTM0WkpNU0ciLCJtYWMiOiIxMWUyNTViYWIxMzcyMGUzNWVkNDU0Yzk5ZGVjMDM0ZDQyZThhYWM2YmY2NTNmOWJkZTE4OTE5OTc0ZTUyNzgzIiwidGFnIjoiIn0%3D; expires=Wed, 09 Nov 2022 12:59:01 GMT; Max-Age=7200; path=/; domain=localhost; httponly; samesite=lax"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"data\": {\n        \"folder\": {\n            \"id\": 3,\n            \"name\": \"my_folder\",\n            \"size\": 58\n        }\n    }\n}"
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.request.headers.add({key: 'Accept', value: 'application/json'});",
+					"pm.request.headers.add({key: 'Origin', value: 'localhost'});",
+					"pm.request.headers.add({key: 'X-XSRF-TOKEN', value: pm.collectionVariables.get('CSRF_TOKEN')});",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "http://localhost:80",
+			"type": "default"
+		},
+		{
+			"key": "BASE_API_URL",
+			"value": "http://localhost:80/api",
+			"type": "default"
+		},
+		{
+			"key": "CSRF_TOKEN",
+			"value": ""
+		}
+	]
+}

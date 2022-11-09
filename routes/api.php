@@ -52,6 +52,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/root', 'store')->name('store');
 
             Route::delete('/{folder:id}', 'delete')->name('delete');
+
+            Route::get('/{folder:id}', 'show')->name('show');
         });
 
     Route::controller(UserController::class)->name('user.')->group(function () {
