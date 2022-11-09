@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\JsonResponseHelper;
 use App\Models\File;
+use App\Models\Folder;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -30,12 +31,27 @@ class FileController extends Controller
     public const MAX_FILE_SIZE = 20 * 1024 * 1024;
     public const MAX_STORAGE_SIZE = 100 * 1024 * 1024;
 
-    /**
-     * List all files owned by the user.
-     *
-     * @return JsonResponse
-     */
-    public function index(): JsonResponse
+    public function index(?Folder $folder = null): JsonResponse
+    {
+        if ($folder !== null) {
+            // TODO: Implement getting a list of files inside the folder
+            throw new \Exception('Not implemented');
+        }
+
+        /** @var User $user */
+        $user = auth()->user();
+        $files = $user
+            ->files()
+            ->get()
+            ->map(fn(File $fileModel) => $fileModel->only(['id', 'name', 'size', 'created_at']));
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $files,
+        ]);
+    }
+
+    public function all(): JsonResponse
     {
         /** @var User $user */
         $user = auth()->user();
@@ -53,7 +69,7 @@ class FileController extends Controller
     public function store(
         JsonResponseHelper $response,
         Request            $request,
-        string             $folder = null,
+        ?Folder            $folder = null,
     ): JsonResponse
     {
         if ($folder !== null) {
