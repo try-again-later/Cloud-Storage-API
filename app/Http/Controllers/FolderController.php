@@ -87,12 +87,17 @@ class FolderController extends Controller
      *
      * @param Folder $folder
      * @param JsonResponseHelper $response
+     * @param Request $request
      * @return JsonResponse
      */
-    public function delete(Folder $folder, JsonResponseHelper $response): JsonResponse
+    public function delete(
+        Folder             $folder,
+        JsonResponseHelper $response,
+        Request            $request,
+    ): JsonResponse
     {
         // Users are not allowed to delete their root folder
-        if ($folder->id === auth()->user()->rootFolder->id) {
+        if ($request->user()->cannot('delete', $folder)) {
             return $response
                 ->withMessage('Deleting the root folder is not allowed')
                 ->forbidden();
@@ -120,11 +125,16 @@ class FolderController extends Controller
      *
      * @param JsonResponseHelper $response
      * @param Folder $folder
+     * @param Request $request
      * @return JsonResponse
      */
-    public function show(JsonResponseHelper $response, Folder $folder)
+    public function show(
+        JsonResponseHelper $response,
+        Folder             $folder,
+        Request            $request,
+    )
     {
-        if ($folder->parentFolder->id !== auth()->user()->rootFolder->id) {
+        if ($request->user()->cannot('view', $folder)) {
             return $response->forbidden();
         }
 

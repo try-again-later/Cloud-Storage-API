@@ -160,7 +160,7 @@ class FileController extends Controller
         JsonResponseHelper $response,
     ): JsonResponse
     {
-        if ($file->owner->id !== auth()->id()) {
+        if ($request->user()->cannot('update', $file)) {
             return $response->forbidden();
         }
 
@@ -192,9 +192,10 @@ class FileController extends Controller
     public function delete(
         File               $file,
         JsonResponseHelper $response,
+        Request            $request,
     ): JsonResponse
     {
-        if ($file->owner->id !== auth()->id()) {
+        if ($request->user()->cannot('delete', $file)) {
             return $response->forbidden();
         }
 
@@ -226,9 +227,10 @@ class FileController extends Controller
     public function show(
         File               $file,
         JsonResponseHelper $response,
+        Request            $request,
     ): StreamedResponse|JsonResponse
     {
-        if ($file->owner->id !== auth()->id()) {
+        if ($request->user()->cannot('view', $file)) {
             return $response->forbidden();
         }
 
