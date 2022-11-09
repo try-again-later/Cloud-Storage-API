@@ -7,6 +7,7 @@ use App\Models\File;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -26,6 +27,14 @@ class FileController extends Controller
         'php',
     ];
 
+    public const MAX_FILE_SIZE = 20 * 1024 * 1024;
+    public const MAX_STORAGE_SIZE = 100 * 1024 * 1024;
+
+    /**
+     * List all files owned by the user.
+     *
+     * @return JsonResponse
+     */
     public function index(): JsonResponse
     {
         /** @var User $user */
@@ -33,7 +42,7 @@ class FileController extends Controller
         $files = $user
             ->files()
             ->get()
-            ->map(fn(File $fileModel) => $fileModel->only(['id', 'name', 'created_at']));
+            ->map(fn(File $fileModel) => $fileModel->only(['id', 'name', 'size', 'created_at']));
 
         return response()->json([
             'status' => 'success',
@@ -53,7 +62,7 @@ class FileController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'file' => ['required', 'max:20000'],
+            'file' => ['required'],
         ]);
 
         if ($validator->fails()) {
@@ -67,7 +76,24 @@ class FileController extends Controller
                 ->badRequest();
         }
 
+        $rootFolder = auth()->user()->rootFolder;
+        $fileFolder = $rootFolder;
+
         $file = $request->file('file');
+        $fileSize = $file->getSize();
+
+        if ($fileSize > self::MAX_FILE_SIZE) {
+            $fileSizeError = sprintf('Files can be at most %dMb large', self::MAX_FILE_SIZE / 1024 / 1024);
+            return $response
+                ->withData(['file' => $fileSizeError])
+                ->badRequest();
+        }
+        if ($rootFolder->size + $fileSize > self::MAX_FILE_SIZE) {
+            $fileSizeError = sprintf('You can\'t upload more than %dMb to the cloud', self::MAX_STORAGE_SIZE / 1024 / 1024);
+            return $response
+                ->withData(['file' => $fileSizeError])
+                ->badRequest();
+        }
 
         if (
             in_array(strtolower($file->getClientOriginalExtension()), self::RESTRICTED_FILE_EXTENSIONS) ||
@@ -81,16 +107,18 @@ class FileController extends Controller
 
         $filePath = $file->store('user_files');
 
-        $fileModel = File::query()->create([
-            'name' => Str::limit($file->getClientOriginalName(), limit: 255),
-            'path' => $filePath,
-            'owner_id' => auth()->id(),
-            'folder_id' => null,
-        ]);
+        DB::transaction(function () use ($file, $filePath, $fileSize, $fileFolder) {
+            $fileFolder->size = $fileFolder->size + $fileSize;
+            $fileFolder->save();
 
-        if (!$fileModel->exists()) {
-            return $response->serverError();
-        }
+            File::query()->create([
+                'name' => Str::limit($file->getClientOriginalName(), limit: 255),
+                'path' => $filePath,
+                'size' => $fileSize,
+                'owner_id' => auth()->id(),
+                'folder_id' => auth()->user()->rootFolder->id,
+            ]);
+        });
 
         return $response->ok();
     }
@@ -112,6 +140,7 @@ class FileController extends Controller
             return $response->withdata($validator->errors()->toarray())->badRequest();
         }
         $validatedData = $validator->safe()->only(['name']);
+
         $validatedData['name'] = $validatedData['name'] ?? $file->name;
 
         $file->name = $validatedData['name'];
@@ -119,9 +148,7 @@ class FileController extends Controller
             return $response->serverError();
         }
 
-        return $response
-            ->withData(['file' => $file->only(['id', 'name', 'created_at'])])
-            ->ok();
+        return $response->ok();
     }
 
     public function delete(
@@ -141,7 +168,7 @@ class FileController extends Controller
     }
 
     public function show(
-        File $file,
+        File               $file,
         JsonResponseHelper $response,
     )
     {
@@ -149,6 +176,6 @@ class FileController extends Controller
             return $response->unauthorized();
         }
 
-        return Storage::download($file->path);
+        return Storage::download($file->path, $file->name);
     }
 }

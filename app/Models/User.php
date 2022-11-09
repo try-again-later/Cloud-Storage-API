@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -22,6 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'root_folder_id',
     ];
 
     /**
@@ -46,5 +48,10 @@ class User extends Authenticatable
     public function files(): HasMany
     {
         return $this->hasMany(File::class, 'owner_id');
+    }
+
+    public function rootFolder(): HasOne
+    {
+        return $this->hasOne(Folder::class, 'id');
     }
 }

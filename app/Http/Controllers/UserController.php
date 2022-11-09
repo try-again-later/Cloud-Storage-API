@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\JsonResponseHelper;
+use App\Models\Folder;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -48,17 +50,22 @@ class UserController extends Controller
         }
 
         $validatedUserData = $validator->safe()->only(['name', 'email', 'password']);
-        $newUser = User::query()->create([
-            'name' => $validatedUserData['name'],
-            'email' => $validatedUserData['email'],
-            'password' => Hash::make($validatedUserData['password']),
-        ]);
 
-        if (!$newUser->exists()) {
-            return $response->serverError();
-        }
+        DB::transaction(function () use ($validatedUserData) {
+            $rootFolder = Folder::query()->create([
+                // the name doesn't really matter since that's the root folder
+                'name' => '/',
+            ]);
 
-        auth()->login($newUser);
+            $newUser = User::query()->create([
+                'name' => $validatedUserData['name'],
+                'email' => $validatedUserData['email'],
+                'password' => Hash::make($validatedUserData['password']),
+                'root_folder_id' => $rootFolder->id,
+            ]);
+
+            auth()->login($newUser);
+        });
 
         return $response->ok();
     }
