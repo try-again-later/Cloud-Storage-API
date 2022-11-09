@@ -38,7 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('', 'store')->name('store');
 
             Route::patch('/id/{file:id}', 'update')->name('update');
-            Route::delete('/id/{file:id}', 'delete')->name('delete');
+            Route::delete('/{file:id}', 'delete')->name('delete');
             Route::get('/id/{file:id}', 'show')->name('show');
         });
 
@@ -47,7 +47,11 @@ Route::middleware('auth:sanctum')->group(function () {
         ->prefix('folders')
         ->group(function () {
             Route::get('', 'index')->name('index');
+            Route::get('/root', 'getRootFolder')->name('index');
+
             Route::post('', 'store')->name('store');
+            Route::post('/root', 'store')->name('store');
+
             Route::delete('/{folder:id}', 'delete')->name('delete');
         });
 
