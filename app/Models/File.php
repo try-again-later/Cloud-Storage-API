@@ -26,4 +26,9 @@ class File extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function folder(): BelongsTo
+    {
+        return $this->belongsTo(Folder::class);
+    }
 }

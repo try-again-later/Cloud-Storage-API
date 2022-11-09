@@ -33,14 +33,8 @@ class FileController extends Controller
 
     public function index(?Folder $folder = null): JsonResponse
     {
-        if ($folder !== null) {
-            // TODO: Implement getting a list of files inside the folder
-            throw new \Exception('Not implemented');
-        }
-
-        /** @var User $user */
-        $user = auth()->user();
-        $files = $user
+        $folder ??= auth()->user()->rootFolder;
+        $files = $folder
             ->files()
             ->get()
             ->map(fn(File $fileModel) => $fileModel->only(['id', 'name', 'size', 'created_at']));
@@ -72,11 +66,6 @@ class FileController extends Controller
         ?Folder            $folder = null,
     ): JsonResponse
     {
-        if ($folder !== null) {
-            // TODO: Implement saving files to folders
-            throw new \Exception('Not implemented');
-        }
-
         $validator = Validator::make($request->all(), [
             'file' => ['required'],
         ]);
@@ -93,7 +82,7 @@ class FileController extends Controller
         }
 
         $rootFolder = auth()->user()->rootFolder;
-        $fileFolder = $rootFolder;
+        $fileFolder = $folder ?? $rootFolder;
 
         $file = $request->file('file');
         $fileSize = $file->getSize();
@@ -123,20 +112,29 @@ class FileController extends Controller
 
         $filePath = $file->store('user_files');
 
-        DB::transaction(function () use ($file, $filePath, $fileSize, $fileFolder) {
+        $newFile = DB::transaction(function () use ($rootFolder, $file, $filePath, $fileSize, $fileFolder) {
             $fileFolder->size = $fileFolder->size + $fileSize;
             $fileFolder->save();
 
-            File::query()->create([
+            if ($fileFolder->id !== $rootFolder->id) {
+                $rootFolder->size = $rootFolder->size + $fileSize;
+                $rootFolder->save();
+            }
+
+            return File::query()->create([
                 'name' => Str::limit($file->getClientOriginalName(), limit: 255),
                 'path' => $filePath,
                 'size' => $fileSize,
                 'owner_id' => auth()->id(),
-                'folder_id' => auth()->user()->rootFolder->id,
+                'folder_id' => $fileFolder->id,
             ]);
         });
 
-        return $response->ok();
+        return $response
+            ->withData([
+                'file' => ['id' => $newFile->id],
+            ])
+            ->ok();
     }
 
     public function update(
@@ -176,9 +174,20 @@ class FileController extends Controller
             return $response->forbidden();
         }
 
-        if (!$file->delete()) {
-            return $response->serverError();
-        }
+        DB::transaction(function () use ($file) {
+            $rootFolder = auth()->user()->rootFolder;
+            $parentFolder = $file->folder;
+
+            $rootFolder->size = $rootFolder->size - $file->size;
+            $rootFolder->save();
+
+            if ($rootFolder->id !== $parentFolder->id) {
+                $parentFolder->size = $parentFolder->size - $file->size;
+                $parentFolder->save();
+            }
+
+            $file->delete();
+        });
 
         return $response->ok();
     }

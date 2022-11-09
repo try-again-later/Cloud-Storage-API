@@ -56,7 +56,7 @@ class FolderController extends Controller
 
         return $response
             ->withData([
-                'id' => $newFolder->id,
+                'folder' => ['id' => $newFolder->id],
             ])
             ->ok();
     }
@@ -74,6 +74,10 @@ class FolderController extends Controller
         }
 
         DB::transaction(function () use ($folder) {
+            $rootFolder = auth()->user()->rootFolder;
+            $rootFolder->size = $rootFolder->size - $folder->size;
+            $rootFolder->save();
+
             foreach ($folder->files as $file) {
                 $file->delete();
             }

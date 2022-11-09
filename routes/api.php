@@ -32,7 +32,6 @@ Route::middleware('auth:sanctum')->group(function () {
         ->group(function () {
             Route::get('/folder/{folder:id}', 'index')->name('index');
             Route::get('', 'index')->name('index');
-            Route::get('/all', 'all')->name('all');
 
             Route::post('/folder/{folder:id?}', 'store')->name('store');
             Route::post('', 'store')->name('store');
