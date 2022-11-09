@@ -1470,12 +1470,12 @@
 	"variable": [
 		{
 			"key": "BASE_URL",
-			"value": "http://localhost:80",
+			"value": "http://194.226.121.94:80",
 			"type": "default"
 		},
 		{
 			"key": "BASE_API_URL",
-			"value": "http://localhost:80/api",
+			"value": "http://194.226.121.94:80/api",
 			"type": "default"
 		},
 		{
