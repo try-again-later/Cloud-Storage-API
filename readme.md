@@ -14,6 +14,8 @@ Deployed version is available at [194.226.121.94](http://194.226.121.94:80).
 git clone https://github.com/try-again-later/Cloud-Storage-API
 cd Cloud-Storage-API
 
+cp .env.example .env
+
 # https://laravel.com/docs/9.x/sail#installing-composer-dependencies-for-existing-projects
 docker run --rm \
     -u "$(id -u):$(id -g)" \
